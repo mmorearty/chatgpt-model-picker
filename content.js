@@ -169,42 +169,55 @@
     }
 
     function openModelPicker() {
-        const picker = findModelPicker();
-        if (!picker) {
-            return false;
-        }
+        // First, find the visible model picker button
+        const allPickers = document.querySelectorAll('[data-testid="model-switcher-dropdown-button"]');
+        let visiblePicker = null;
         
-        // Capture the picker button position BEFORE we click it
-        const pickerRect = picker.getBoundingClientRect();
-        
-        // Find the actual visible model picker button if the first one has zero coords
-        let actualPicker = picker;
-        let actualPickerRect = pickerRect;
-        
-        if (pickerRect.width === 0 || pickerRect.height === 0) {
-            const allButtons = Array.from(document.querySelectorAll('button'));
-            const modelButtons = allButtons.filter(btn => {
-                const text = btn.textContent.toLowerCase();
-                return text.includes('gpt') || text.includes('4o') || text.includes('o1') || text.includes('o3');
-            });
-            
-            const visibleModelButton = modelButtons.find(btn => {
-                const rect = btn.getBoundingClientRect();
-                return rect.width > 0 && rect.height > 0;
-            });
-            
-            if (visibleModelButton) {
-                actualPicker = visibleModelButton;
-                actualPickerRect = visibleModelButton.getBoundingClientRect();
+        for (const picker of allPickers) {
+            const rect = picker.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                visiblePicker = picker;
+                break;
             }
         }
         
+        // Fallback to the old method if specific selector doesn't work
+        if (!visiblePicker) {
+            const picker = findModelPicker();
+            if (!picker) {
+                return false;
+            }
+            const pickerRect = picker.getBoundingClientRect();
+            
+            if (pickerRect.width > 0 && pickerRect.height > 0) {
+                visiblePicker = picker;
+            } else {
+                const allButtons = Array.from(document.querySelectorAll('button'));
+                const modelButtons = allButtons.filter(btn => {
+                    const text = btn.textContent.toLowerCase();
+                    return text.includes('gpt') || text.includes('4o') || text.includes('o1') || text.includes('o3');
+                });
+                
+                visiblePicker = modelButtons.find(btn => {
+                    const rect = btn.getBoundingClientRect();
+                    return rect.width > 0 && rect.height > 0;
+                });
+            }
+        }
+        
+        if (!visiblePicker) {
+            return false;
+        }
+        
+        // Capture the visible picker button position BEFORE we click it
+        const pickerRect = visiblePicker.getBoundingClientRect();
+        
         // Try different approaches to trigger the button
         try {
-            picker.focus();
+            visiblePicker.focus();
             
             // Method 1: Try Space key on focused element (works best with React)
-            picker.dispatchEvent(new KeyboardEvent('keydown', { 
+            visiblePicker.dispatchEvent(new KeyboardEvent('keydown', { 
                 key: ' ', 
                 code: 'Space', 
                 keyCode: 32,
@@ -213,7 +226,7 @@
             }));
             
             // Method 2: Try standard click as fallback
-            picker.click();
+            visiblePicker.click();
             
         } catch (e) {
             console.log('Interaction failed:', e);
@@ -227,18 +240,17 @@
                 
                 const listRect = list.getBoundingClientRect();
                 
-                
-                // Use the captured picker coordinates and check if dropdown is misplaced
-                if (actualPickerRect.left > 0 && actualPickerRect.bottom > 0 && 
-                    (listRect.left < actualPickerRect.left - 50 || listRect.left === 0)) {
+                // Check if dropdown is misplaced and needs repositioning
+                if (pickerRect.left > 0 && pickerRect.bottom > 0 && 
+                    (listRect.left < pickerRect.left - 50 || listRect.left === 0)) {
                     
                     // Store original styles to avoid breaking width
                     const originalWidth = list.style.width || getComputedStyle(list).width;
                     
                     // Apply positioning fix while preserving width
                     list.style.position = 'fixed';
-                    list.style.left = `${actualPickerRect.left}px`;
-                    list.style.top = `${actualPickerRect.bottom + 4}px`;
+                    list.style.left = `${pickerRect.left}px`;
+                    list.style.top = `${pickerRect.bottom + 4}px`;
                     list.style.width = originalWidth;
                     list.style.zIndex = '9999';
                     

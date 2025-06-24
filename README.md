@@ -6,9 +6,12 @@ A Chrome extension that adds keyboard shortcuts for quickly selecting ChatGPT mo
 
 - **Cmd+Shift+P**: Open the model picker
 - **Arrow keys**: Navigate up/down through models
-- **Enter**: Select the highlighted model
 - **Type to filter**: Type part of a model name (e.g., "4o", "o3") to filter the list
-- **Escape**: Close the picker without selecting
+- **Enter**: Select the highlighted model
+
+Click to watch a quick demo:
+
+[![Demo](https://img.youtube.com/vi/yCU6PeS4fVw/0.jpg)](https://www.youtube.com/watch/?v=yCU6PeS4fVw)
 
 ## Installation
 

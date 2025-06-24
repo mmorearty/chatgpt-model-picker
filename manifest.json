@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Model Picker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Keyboard shortcuts for quickly selecting ChatGPT models",
   "homepage_url": "https://github.com/mmorearty/chatgpt-model-picker",
   "permissions": [

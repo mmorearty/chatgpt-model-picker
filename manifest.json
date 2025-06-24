@@ -5,12 +5,7 @@
   "description": "Keyboard shortcuts for quickly selecting ChatGPT models",
   "homepage_url": "https://github.com/mmorearty/chatgpt-model-picker",
   "permissions": [
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "https://chatgpt.com/*",
-    "https://chat.openai.com/*"
+    "activeTab"
   ],
   "content_scripts": [
     {

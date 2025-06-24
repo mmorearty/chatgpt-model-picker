@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Model Picker",
+  "version": "1.0.0",
+  "description": "Keyboard shortcuts for quickly selecting ChatGPT models",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_title": "ChatGPT Model Picker"
+  }
+}

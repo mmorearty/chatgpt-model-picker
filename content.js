@@ -6,6 +6,37 @@
     let filteredItems = [];
     let selectedIndex = 0;
     let filterText = '';
+    let instructionMessage = null;
+
+    function showInstructionMessage(list) {
+        const listRect = list.getBoundingClientRect();
+        
+        instructionMessage = document.createElement('div');
+        instructionMessage.textContent = '↑↓ navigate • type to filter • Enter to select';
+        instructionMessage.style.cssText = `
+            position: fixed;
+            left: ${listRect.right + 12}px;
+            top: ${listRect.top}px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            z-index: 10000;
+            pointer-events: none;
+            white-space: nowrap;
+        `;
+        
+        document.body.appendChild(instructionMessage);
+    }
+
+    function hideInstructionMessage() {
+        if (instructionMessage) {
+            instructionMessage.remove();
+            instructionMessage = null;
+        }
+    }
 
     function focusChatInput() {
         // Try to find and focus the main chat input
@@ -224,6 +255,8 @@
                     highlightSelected(filteredItems, selectedIndex);
                 }
                 
+                showInstructionMessage(list);
+                
                 return true;
             } else if (attempt < 3) {
                 // Try again with increasing delays
@@ -246,6 +279,7 @@
             });
         }
         
+        hideInstructionMessage();
         document.body.click();
         isPickerOpen = false;
         originalList = null;
@@ -360,6 +394,20 @@
         }
     }
 
+    function setupTooltip() {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const shortcut = isMac ? 'Cmd+Shift+P' : 'Ctrl+Shift+P';
+        const tooltipText = `Press ${shortcut} to open model picker`;
+        
+        // Find all model picker buttons (there can be multiple for mobile/desktop)
+        const buttons = document.querySelectorAll('[data-testid="model-switcher-dropdown-button"]');
+        buttons.forEach(button => {
+            if (!button.hasAttribute('title')) {
+                button.setAttribute('title', tooltipText);
+            }
+        });
+    }
+
     document.addEventListener('keydown', handleKeyDown, true);
 
     document.addEventListener('click', function(e) {
@@ -367,6 +415,10 @@
             closeModelPicker();
         }
     });
+
+    // Set up tooltip when page loads and periodically check for new buttons
+    setupTooltip();
+    setInterval(setupTooltip, 2000);
 
     console.log('ChatGPT Model Picker extension loaded');
 })();

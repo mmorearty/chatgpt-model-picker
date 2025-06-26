@@ -78,11 +78,11 @@ A Chrome extension that adds keyboard shortcuts for quickly selecting ChatGPT mo
 ## Browser Compatibility
 - Chrome (Manifest V3)
 - Works on both chatgpt.com and chat.openai.com
-- Requires host permissions for ChatGPT domains
+- No special permissions required - uses content scripts with host matches
 
 ## Development Notes
 - Extension uses content script injection (no background script needed)
-- Minimal permissions: activeTab, scripting, and host permissions
+- No special permissions required - only uses content scripts with host pattern matching
 - Robust error handling for UI changes
 - No hardcoded model names - works with any models in the dropdown
 
